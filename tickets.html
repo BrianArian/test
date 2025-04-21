@@ -129,7 +129,7 @@
                 <input type="radio" name="Q1" value="Mantenimiento"> Mantenimiento Oficina<br>
                 <input type="radio" name="Q1" value="SAP"> SAP<br>
                 <input type="radio" name="Q1" value="Talentu"> Talentu<br>
-                <input type="radio" name="Q1" value="Ticket"> Ticket CFE<br>
+                <!--<input type="radio" name="Q1" value="Ticket"> Ticket CFE<br>-->
             </div>
 
             <div id="Q2">
@@ -222,13 +222,13 @@
             <div id="Q10">
                 <p>Relacionado con Talentu *</p>
                 <input type="radio" name="Q10" value="Aclaración de vacaciones"> Aclaración de vacaciones<br>
-                <input type="radio" name="Q10" value="No puedo acceder a Talentu"> No puedo acceder a Talentu<br>
+                <input type="radio" name="Q10" value="No puedo acceder a Talentu"> Reseteo de Contraseña<br>
                 <input type="radio" name="Q10" value="Problemas con ausencias"> Problemas con ausencias<br>
                 <input type="radio" name="Q10" value="Otros"> Otros<br>
             </div>
 
             <div id="Q11">
-                <p>Número de empleado *</p>
+                <p>Número de usuario *</p>
                 <input type="text" name="Q11" placeholder="Escriba su respuesta">
             </div>
 
@@ -240,25 +240,23 @@
             </div>
             <div id="Q19">
                 <p>Descripción Mantenimiento *</p>
-                <input type="text" name="Q19" placeholder="Ingrese texto">
-                <textarea name="" id=""></textarea>
-
+                <textarea name="Q19" placeholder="Ingrese texto" rows="4" style="width: 100%; resize: vertical;"></textarea>
             </div>
 
             <div id="Q14">
                 <p>Descripción *</p>
-                <input type="text" name="Q14" placeholder="Escriba su respuesta">
+                <textarea name="Q14" placeholder="Escriba su respuesta" rows="4" style="width: 100%; resize: vertical;"></textarea>
             </div>
-
-            <div id="Q15">
-                <p>Descripción Talentu *</p>
-                <input type="text" name="Q15" placeholder="Escriba su respuesta">
-            </div>
-
             <div id="Q12">
                 <p>Enlistar transacciones *</p>
                 <input type="text" name="Q12" placeholder="Escriba su respuesta">
             </div>
+            <div id="Q15">
+                <p>Descripción Talentu *</p>
+                <textarea name="Q15" placeholder="Escriba su respuesta" rows="4" style="width: 100%; resize: vertical;"></textarea>
+            </div>
+
+           
 
             <div id="Q16">
                 <p>Ubicación Reportada *</p>
@@ -498,7 +496,7 @@
 <script>
     // Ocultar solo lo relacionado a Q10
     function hideQ10Relations() {
-        const steps = ['Q11', 'Q12'];
+        const steps = ['Q11', 'Q12', 'Q15'];
         steps.forEach(id => document.getElementById(id).style.display = 'none');
     }
 
@@ -508,10 +506,12 @@
     // Detectar selección en Q10
     document.querySelectorAll('input[name="Q10"]').forEach(input => {
         input.addEventListener('change', function () {
-            hideQ10Relations(); // Oculta lo demás
+            hideQ10Relations(); // Oculta todo lo relacionado a Q10
 
             if (this.value === 'No puedo acceder a Talentu') {
                 document.getElementById('Q11').style.display = 'block';
+            } else if (this.value === 'Otros') {
+                document.getElementById('Q15').style.display = 'block';
             } else {
                 document.getElementById('Q12').style.display = 'block';
             }
@@ -574,6 +574,68 @@
 </script>
 
 <script>
+    function updateQ14Q1Relations() {
+        const inputQ14 = document.querySelector('[name="Q14"]');
+        const selectedQ1 = document.querySelector('[name="Q1"]:checked');
+        const selectedQ6 = document.querySelector('input[name="Q6"]:checked');
+        const selectedQ10 = document.querySelector('input[name="Q10"]:checked');
+
+        const q14Filled = inputQ14 && inputQ14.value.trim() !== '';
+        const isDigitalOrJuridico = selectedQ1 && (selectedQ1.value === 'Digital' || selectedQ1.value === 'Juridico');
+        const isReseteo = selectedQ6 && selectedQ6.value === 'Reseteo/Desbloqueo de Contraseña';
+        const isNoAccessTalentu = selectedQ10 && selectedQ10.value === 'No puedo acceder a Talentu';
+
+        // ✅ SI y solo SI se seleccionó "Reseteo/Desbloqueo de Contraseña" y se escribió en Q14 → mostrar botón
+        if (isReseteo && q14Filled) {
+            document.getElementById('Q17').style.display = 'none';
+            document.getElementById('Q18').style.display = 'none';
+            document.getElementById('SubmitButtons').style.display = 'block';
+            return;
+        }
+
+        // ✅ SI seleccionan "No puedo acceder a Talentu" → mostrar botón
+        if (isNoAccessTalentu) {
+            document.getElementById('Q17').style.display = 'none';
+            document.getElementById('Q18').style.display = 'none';
+            document.getElementById('SubmitButtons').style.display = 'block';
+            return;
+        }
+
+        // Mostrar u ocultar Q17 si Q14 está lleno o Q1 = Digital/Jurídico
+        if (q14Filled || isDigitalOrJuridico) {
+            document.getElementById('Q17').style.display = 'block';
+        } else {
+            document.getElementById('Q17').style.display = 'none';
+        }
+
+        // Mostrar u ocultar Q18 si Q1 = Digital/Jurídico
+        document.getElementById('Q18').style.display = isDigitalOrJuridico ? 'block' : 'none';
+    }
+
+    // Ocultar Q17, Q18 y SubmitButtons al inicio
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('Q17').style.display = 'none';
+        document.getElementById('Q18').style.display = 'none';
+        document.getElementById('SubmitButtons').style.display = 'none';
+    });
+
+    // Escuchar cambios
+    document.querySelector('[name="Q14"]').addEventListener('input', updateQ14Q1Relations);
+    document.querySelectorAll('input[name="Q1"]').forEach(radio => {
+        radio.addEventListener('change', updateQ14Q1Relations);
+    });
+    document.querySelectorAll('input[name="Q6"]').forEach(radio => {
+        radio.addEventListener('change', updateQ14Q1Relations);
+    });
+    document.querySelectorAll('input[name="Q10"]').forEach(radio => {
+        radio.addEventListener('change', updateQ14Q1Relations);
+    });
+</script>
+
+
+
+<!--
+<script>
     // Ocultar solo lo relacionado a Q14
     function hideQ14Relations() {
         const steps = ['Q17'];
@@ -594,28 +656,37 @@
         }
     });
 </script>
+-->
+
 
 <script>
     // Ocultar solo lo relacionado a Q15
     function hideQ15Relations() {
-        const steps = ['Q18'];
+        const steps = ['Q18', 'SubmitButtons'];
         steps.forEach(id => document.getElementById(id).style.display = 'none');
     }
 
     // Ocultar al inicio
     hideQ15Relations();
 
-    // Detectar escritura en Q15
-    const inputQ15 = document.querySelector('input[name="Q15"]');
+    const inputQ15 = document.querySelector('[name="Q15"]');
+    const radiosQ10 = document.querySelectorAll('input[name="Q10"]');
+
     inputQ15.addEventListener('input', function () {
-        if (this.value.trim() !== '') {
-            hideQ15Relations();
+        const q15Filled = this.value.trim() !== '';
+        const selectedQ10 = Array.from(radiosQ10).find(r => r.checked);
+        const isQ10_Otros = selectedQ10 && selectedQ10.value === 'Otros';
+
+        hideQ15Relations(); // Siempre ocultamos al inicio
+
+        if (q15Filled && isQ10_Otros) {
+            document.getElementById('SubmitButtons').style.display = 'block';
+        } else if (q15Filled) {
             document.getElementById('Q18').style.display = 'block';
-        } else {
-            hideQ15Relations(); // Si borran → ocultar Q18
         }
     });
 </script>
+
 
 <script>
     // Ocultar al inicio
@@ -683,7 +754,7 @@
     hideQ19Relations();
 
     // Detectar escritura en Q19
-    const inputQ19 = document.querySelector('input[name="Q19"]');
+    const inputQ19 = document.querySelector('[name="Q19"]');
     inputQ19.addEventListener('input', function () {
         if (this.value.trim() !== '') {
             hideQ19Relations();
