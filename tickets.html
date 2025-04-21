@@ -90,22 +90,7 @@
       }
     }
   </style>
-<script>
-  // Función para leer parámetros de la URL
-  function getQueryParam(name) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(name);
-  }
-
-  // Al cargar, insertar el email si viene en la URL
-  window.addEventListener('DOMContentLoaded', () => {
-    const email = getQueryParam('email');
-    if (email) {
-      const input = document.querySelector('input[name="Q20"]');
-      if (input) input.value = email;
-    }
-  });
-</script>
+  
   
 
 <body>
@@ -284,6 +269,21 @@
 
         </form>
     </div>
+    <script>
+        function getQueryParam(name) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get(name);
+        }
+      
+        // Esperar hasta que toda la página haya cargado
+        window.addEventListener('load', () => {
+          const email = getQueryParam('email');
+          if (email) {
+            const input = document.querySelector('input[name="Q20"]');
+            if (input) input.value = email;
+          }
+        });
+      </script>
 </body>
 
 <script>
@@ -593,7 +593,7 @@
             return;
         }
 
-        // ✅ SI seleccionan "No puedo acceder a Talentu" → mostrar botón
+        //  SI seleccionan "No puedo acceder a Talentu" → mostrar botón
         if (isNoAccessTalentu) {
             document.getElementById('Q17').style.display = 'none';
             document.getElementById('Q18').style.display = 'none';
