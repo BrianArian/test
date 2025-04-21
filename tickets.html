@@ -90,22 +90,22 @@
       }
     }
   </style>
-  <script>
-    // Función para leer parámetros de la URL
-    function getQueryParam(name) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(name);
+<script>
+  // Función para leer parámetros de la URL
+  function getQueryParam(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+  }
+
+  // Al cargar, insertar el email si viene en la URL
+  window.addEventListener('DOMContentLoaded', () => {
+    const email = getQueryParam('email');
+    if (email) {
+      const input = document.querySelector('input[name="Q20"]');
+      if (input) input.value = email;
     }
-  
-    // Al cargar, insertar el email si viene en la URL
-    window.addEventListener('DOMContentLoaded', () => {
-      const email = getQueryParam('email');
-      if (email) {
-        const input = document.querySelector('input[name="Q20"]');
-        if (input) input.value = email;
-      }
-    });
-  </script>
+  });
+</script>
   
 
 <body>
