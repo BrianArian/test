@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Abrir Tickets</title>
+</head>
+<body style="display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
+  <button style="padding: 12px 20px; font-size: 16px; background-color: #ED4036; color: white; border: none; border-radius: 8px; cursor: pointer;"
+    onclick="abrirFormulario()">Levantar Ticket</button>
+
+  <script>
+    function abrirFormulario() {
+      // Simulación: este sería el correo del usuario que da clic (puedes reemplazarlo con Teams SDK)
+      const email = "usuario@ammper.com";
+
+      // Redirige a tickets.html con el correo como parámetro
+      window.location.href = `https://brianarian.github.io/test/tickets.html?email=${encodeURIComponent(email)}`;
+    }
+  </script>
+</body>
+</html>
