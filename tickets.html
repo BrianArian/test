@@ -270,14 +270,27 @@
         </form>
     </div>
     <script>
-        function getQueryParam(name) {
+        function getEmailFromIframeURL() {
           const urlParams = new URLSearchParams(window.location.search);
-          return urlParams.get(name);
+          const fromSearch = urlParams.get("email");
+      
+          if (fromSearch) return fromSearch;
+      
+          const referrer = document.referrer;
+          if (referrer) {
+            try {
+              const refParams = new URLSearchParams(new URL(referrer).search);
+              return refParams.get("email");
+            } catch (e) {
+              console.warn("No se pudo leer el referrer:", e);
+            }
+          }
+      
+          return null;
         }
       
-        // Esperar hasta que toda la página haya cargado
-        window.addEventListener('load', () => {
-          const email = getQueryParam('email');
+        window.addEventListener("DOMContentLoaded", () => {
+          const email = getEmailFromIframeURL();
           if (email) {
             const input = document.querySelector('input[name="Q20"]');
             if (input) input.value = email;
